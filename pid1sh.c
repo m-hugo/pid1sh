@@ -9,7 +9,7 @@ static inline void init_term(){
 	sigset_t set;
 	__sigemptyset(&set);
 	__sigaddset(&set, SIGINT);
-	my_syscall4(__NR_rt_sigprocmask, SIG_SETMASK, &set, 0, 8);
+	sigprocmask(SIG_SETMASK, &set, VOID)
 }
 
 static inline void print_env(char* env[]){
@@ -20,7 +20,6 @@ static inline void print_env(char* env[]){
 		size_t l = a-*env;
 		printn(*env, l)
 		print("\n")
-		my_syscall3(__NR_write, STDOUT_FILENO, "\n", 1);
 	}
 }
 
@@ -54,15 +53,16 @@ static inline void exec(unsigned char outbuf[255], long outlen, char* env[]){
 	}
 	argv[argc] = 0;
 	if (argv[0][0] != '/'){
-		char binbuf[100];
-		memcpy(binbuf, "/bin/", 5);
-		memcpy(binbuf+5, argv[0], firstlen);
-		binbuf[firstlen+5] = 0;
-		my_syscall3(__NR_execve, binbuf, argv, env);
+		char path[100];
+		memcpy(path, "/bin/", 5);
+		memcpy(path+5, argv[0], firstlen);
+		path[firstlen+5] = 0;
+		execve(path, argv, env)
 	} else {
-		my_syscall3(__NR_execve, argv[0], argv, env);
+		execve(argv[0], argv, env)
 	}
 }
+
 static inline long process_line(char inbuf, unsigned char outbuf[255], long outlen, long ptrlen, char* env[]){
 while (1) {
 	long bytes_read = getchar(&inbuf);
@@ -77,6 +77,8 @@ while (1) {
 		continue;
 	}
 	if (inbuf == '\t') { //Tab
+		int fd = open("/bin", O_RDONLY | O_DIRECTORY);
+		close(fd);
 		continue;
 	}
 	if (inbuf == '') { // terminal control
@@ -125,7 +127,7 @@ while (1) {
 		if (outlen == 1 && outbuf[0] == 'q' || outlen == 4 && outbuf[0] == 'e' && outbuf[1] == 'x' && outbuf[2] == 'i' && outbuf[3] == 't') {
 			clean_exit(); //EXIT_SUCCESS
 		}
-		if (outlen == 4 && outbuf[0] == 'p' && outbuf[1] == 'o' && outbuf[2] == 'o' && outbuf[3] == 'f' && my_syscall0(__NR_getpid) == 1) { // pid == 1
+		if (outlen == 4 && outbuf[0] == 'p' && outbuf[1] == 'o' && outbuf[2] == 'o' && outbuf[3] == 'f' && getpid() == 1) { // pid == 1
 			//print("System is going Down Now\n");
 			return -3;
 		}
@@ -134,16 +136,16 @@ while (1) {
 		ioctl(TCGETS, &tos) tos.c_lflag |= (ICANON | ECHO); ioctl(TCSETS, &tos)
 		print("[0 q");
 
-		pid_t pid = my_syscall0(__NR_fork);
+		pid_t pid = fork();
 		if ( pid == 0 ) {
 			sigset_t set;
 			__sigemptyset(&set);
-			my_syscall4(__NR_rt_sigprocmask, SIG_SETMASK, &set, 0, 8);
+			sigprocmask(SIG_SETMASK, &set, VOID)
 			exec(outbuf, outlen, env);
 			exit(60); // file not found
 		}
 		int wstatus;
-		if (my_syscall4(__NR_wait4, pid, &wstatus, 0, 0) < 1) {while (outlen) {outlen--; outbuf[outlen]= 0;} return -3;}
+		if (wait4(pid, &wstatus, 0, 0) < 1) {while (outlen) {outlen--; outbuf[outlen]= 0;} return -3;}
 		tos.c_lflag &= (~ICANON & ~ECHO); //tos.set(ICANON & ECHO)
 		ioctl(TCSETS, &tos)
 		print("[5 q");
