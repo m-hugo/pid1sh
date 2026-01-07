@@ -63,14 +63,37 @@ static inline void exec(unsigned char outbuf[255], long outlen, char* env[]){
 	}
 }
 
+struct dent{
+	unsigned long d_ino;
+	signed long d1;
+	unsigned short d_reclen;
+	char d_name[];
+};
+
+static inline void tab_completion(int fd){
+	char buf[50];
+	int bufptr = 0;
+	printn("\n", 1)
+	for(int cnt=0; cnt<60; cnt++){
+		int buflen = my_syscall3(__NR_getdents, fd, buf, 40);
+		if (buflen <= 0 || buflen>40) break;
+		while (bufptr < buflen){
+			struct dent *d = (struct dent *)(buf + bufptr);
+			bufptr += d->d_reclen;
+			if (d->d_name[0]!='.' && can_exec(fd, d->d_name)) puts(d->d_name);
+		}
+		bufptr = 0;
+	}
+}
+
 static inline long process_line(char inbuf, unsigned char outbuf[255], long outlen, long ptrlen, char* env[]){
 while (1) {
 	long bytes_read = getchar(&inbuf);
 	if (bytes_read < 1) clean_exit();
 
 	if (inbuf == 0x7f) { //backspace
-		if (ptrlen == outlen) {outlen--; outbuf[outlen]= 0;}
 		if (ptrlen == 0) continue;
+		if (ptrlen == outlen) {outlen--; outbuf[outlen]= 0;}
 		ptrlen--;
 		outbuf[ptrlen]= ' ';
 		print("[D [D");
@@ -78,6 +101,9 @@ while (1) {
 	}
 	if (inbuf == '\t') { //Tab
 		int fd = open("/bin", O_RDONLY | O_DIRECTORY);
+		print("7");
+		tab_completion(fd);
+		print("8");
 		close(fd);
 		continue;
 	}

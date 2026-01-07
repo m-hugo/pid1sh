@@ -16,7 +16,9 @@
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
+#ifndef ULONG_WIDTH
 #define ULONG_WIDTH __WORDSIZE
+#endif
 
 /* Return a mask that includes the bit for SIG only.  */
 #define __sigmask(sig) \
