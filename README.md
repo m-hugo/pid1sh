@@ -18,7 +18,13 @@ du -b pid1sh
 it should display just:
 ```
 1944	pid1sh
-❯ q
+❯ 
 ```
 
 you're in the shell now, have fun
+
+testing:
+run `cat test.3.sh | ./pid1sh > test.3.log && diff test.3.gold test.3.log --color=always > test.3.diff`
+warning: piping to stdin doesnt behave like in pratice, we should move to either
+1 automated typing in terminal
+2 automated copy-paste, either line by line or all at once is fine

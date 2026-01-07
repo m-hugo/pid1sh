@@ -3,9 +3,13 @@
 static inline void init_term(){
 	struct termios tos;
 	ioctl(TCGETS, &tos)
-	tos.c_lflag &= (~ICANON & ~ECHO & ~ISIG); //tos.set(not ICANON & not ECHO)  & ~ISIG
+	tos.c_lflag &= (~ICANON & ~ECHO); //tos.set(not ICANON & not ECHO)  & ~ISIG
 //	tos.c_lflag &= ~(ICANON | ECHO); //tos.disable(ICANON & ECHO)
 	ioctl(TCSETS, &tos)
+	sigset_t set;
+	__sigemptyset(&set);
+	__sigaddset(&set, SIGINT);
+	my_syscall4(__NR_rt_sigprocmask, SIG_SETMASK, &set, 0, 8);
 }
 
 static inline void print_env(char* env[]){
@@ -20,13 +24,52 @@ static inline void print_env(char* env[]){
 	}
 }
 
+static inline void clean_exit(){
+	struct termios tos;
+	ioctl(TCGETS, &tos)
+	tos.c_lflag |= (ICANON | ECHO);
+	ioctl(TCSETS, &tos)
+	exit(0)
+}
+
+static inline void exec(unsigned char outbuf[255], long outlen, char* env[]){
+	unsigned char *argv[100];
+	const unsigned char *s = outbuf;
+	//int firstlen = 0;
+	int firstlen = 1;
+	while (firstlen<outlen && *++s && *s!=' ') firstlen++;
+	//while (firstlen<outlen && *s!=0 && *s!=' ') {s++; firstlen++;}
+	argv[0]=outbuf; argv[0][firstlen]=0;
+	int totalen = firstlen; int argc = 1;
+	//printn("abcde", totalen)
+	//printn("abcde", outlen)
+	while (totalen < outlen){
+		//if (totalen > outlen) return -3;
+		int sndlen = 0;
+		while (totalen<=outlen && *++s && *s!=' ') sndlen++;
+		//while (totalen<outlen && *s!=0 && *s!=' ') {s++; sndlen++;}
+		totalen++;
+		argv[argc]=outbuf+totalen; argv[argc][sndlen]=0;
+		totalen+=sndlen; argc++;
+	}
+	argv[argc] = 0;
+	if (argv[0][0] != '/'){
+		char binbuf[100];
+		memcpy(binbuf, "/bin/", 5);
+		memcpy(binbuf+5, argv[0], firstlen);
+		binbuf[firstlen+5] = 0;
+		my_syscall3(__NR_execve, binbuf, argv, env);
+	} else {
+		my_syscall3(__NR_execve, argv[0], argv, env);
+	}
+}
 static inline long process_line(char inbuf, unsigned char outbuf[255], long outlen, long ptrlen, char* env[]){
 while (1) {
 	long bytes_read = getchar(&inbuf);
-	if (bytes_read < 1) exit(0)
+	if (bytes_read < 1) clean_exit();
 
 	if (inbuf == 0x7f) { //backspace
-		if (ptrlen == outlen) outlen--;
+		if (ptrlen == outlen) {outlen--; outbuf[outlen]= 0;}
 		if (ptrlen == 0) continue;
 		ptrlen--;
 		outbuf[ptrlen]= ' ';
@@ -69,70 +112,39 @@ while (1) {
 	}
 	printn(&inbuf, 1);
 	if (inbuf == '\n' || inbuf == '#'){ //Commented line or enter
-		if (outbuf[outlen-1] == ' ') outlen--;
-		if (outlen == 0) return 0;
-		//outbuf[outlen]=0;
+		if (outbuf[outlen-1] == ' ') {outlen--; outbuf[outlen]= 0;}
+		//outbuf[outlen]=0; // hopefully same byte as the final argc argv[0][firstlen] or argv[argc][sndlen]
 		while (inbuf!='\n'){
 			getchar(&inbuf)
 			printn(&inbuf, 1);
 		}
+		if (outlen == 0) return 0;
 		if (outbuf[0] == 'c' && outbuf[1] == 'd' && outbuf[2] == ' '){
 			return chdir(outbuf+3)
 		}
 		if (outlen == 1 && outbuf[0] == 'q' || outlen == 4 && outbuf[0] == 'e' && outbuf[1] == 'x' && outbuf[2] == 'i' && outbuf[3] == 't') {
-			exit(0); //EXIT_SUCCESS
+			clean_exit(); //EXIT_SUCCESS
 		}
 		if (outlen == 4 && outbuf[0] == 'p' && outbuf[1] == 'o' && outbuf[2] == 'o' && outbuf[3] == 'f' && my_syscall0(__NR_getpid) == 1) { // pid == 1
 			//print("System is going Down Now\n");
 			return -3;
 		}
-		sigset_t set;
-		__sigemptyset(&set);
+
+		struct termios tos;
+		ioctl(TCGETS, &tos) tos.c_lflag |= (ICANON | ECHO); ioctl(TCSETS, &tos)
+		print("[0 q");
+
 		pid_t pid = my_syscall0(__NR_fork);
 		if ( pid == 0 ) {
+			sigset_t set;
+			__sigemptyset(&set);
 			my_syscall4(__NR_rt_sigprocmask, SIG_SETMASK, &set, 0, 8);
-
-			unsigned char *argv[100];
-			const unsigned char *s = outbuf;
-			//int firstlen = 0;
-			int firstlen = 1;
-			while (firstlen<outlen && *++s && *s!=' ') firstlen++;
-			//while (firstlen<outlen && *s!=0 && *s!=' ') {s++; firstlen++;}
-			argv[0]=outbuf; argv[0][firstlen]=0;
-			int totalen = firstlen; int argc = 1;
-			//printn("abcde", totalen)
-			//printn("abcde", outlen)
-			while (totalen < outlen){
-				//if (totalen > outlen) return -3;
-				int sndlen = 0;
-				while (totalen<=outlen && *++s && *s!=' ') sndlen++;
-				//while (totalen<outlen && *s!=0 && *s!=' ') {s++; sndlen++;}
-				totalen++;
-				argv[argc]=outbuf+totalen; argv[argc][sndlen]=0;
-				totalen+=sndlen; argc++;
-			}
-			argv[argc] = 0;
-			if (argv[0][0] != '/'){
-				char binbuf[100];
-				memcpy(binbuf, "/bin/", 5);
-				memcpy(binbuf+5, argv[0], firstlen);
-				binbuf[firstlen+5] = 0;
-				my_syscall3(__NR_execve, binbuf, argv, env);
-			} else {
-				my_syscall3(__NR_execve, argv[0], argv, env);
-			}
+			exec(outbuf, outlen, env);
 			exit(60); // file not found
 		}
-		__sigaddset(&set, SIGINT);
-		my_syscall4(__NR_rt_sigprocmask, SIG_SETMASK, &set, 0, 8);
-		struct termios tos;
-		ioctl(TCGETS, &tos)
-		tos.c_lflag |= (ICANON | ECHO | ISIG); //tos.set(ICANON & ECHO)
-		ioctl(TCSETS, &tos)
-		print("[0 q");
 		int wstatus;
-		if (my_syscall4(__NR_wait4, pid, &wstatus, 0, 0) < 1) return -3;
-		tos.c_lflag &= (~ICANON & ~ECHO & ~ISIG); //tos.set(ICANON & ECHO)
+		if (my_syscall4(__NR_wait4, pid, &wstatus, 0, 0) < 1) {while (outlen) {outlen--; outbuf[outlen]= 0;} return -3;}
+		tos.c_lflag &= (~ICANON & ~ECHO); //tos.set(ICANON & ECHO)
 		ioctl(TCSETS, &tos)
 		print("[5 q");
 		if (wstatus & 0x7f) {//WTERMSIG or !WIFEXITED
