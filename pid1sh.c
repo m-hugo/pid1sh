@@ -12,6 +12,7 @@ static inline void init_term(){
 	sigprocmask(SIG_SETMASK, &set, VOID)
 }
 
+#ifdef TODO
 static inline void print_env(char* env[]){
 	print("TODO: search in ")
 	for (; *env; env++) {
@@ -22,6 +23,7 @@ static inline void print_env(char* env[]){
 		print("\n")
 	}
 }
+#endif
 
 static inline void clean_exit(){
 	struct termios tos;
@@ -63,13 +65,13 @@ static inline void exec(unsigned char outbuf[255], long outlen, char* env[]){
 	}
 }
 
+#ifdef TAB_SUPPORT
 struct dent{
 	unsigned long d_ino;
 	signed long d1;
 	unsigned short d_reclen;
 	char d_name[];
 };
-
 static inline void tab_completion(int fd){
 	char buf[50];
 	int bufptr = 0;
@@ -85,6 +87,7 @@ static inline void tab_completion(int fd){
 		bufptr = 0;
 	}
 }
+#endif
 
 static inline long process_line(char inbuf, unsigned char outbuf[255], long outlen, long ptrlen, char* env[]){
 while (1) {
@@ -100,11 +103,13 @@ while (1) {
 		continue;
 	}
 	if (inbuf == '\t') { //Tab
+		#ifdef TAB_SUPPORT
 		int fd = open("/bin", O_RDONLY | O_DIRECTORY);
 		print("7");
 		tab_completion(fd);
 		print("8");
 		close(fd);
+		#endif
 		continue;
 	}
 	if (inbuf == '') { // terminal control
@@ -153,10 +158,12 @@ while (1) {
 		if (outlen == 1 && outbuf[0] == 'q' || outlen == 4 && outbuf[0] == 'e' && outbuf[1] == 'x' && outbuf[2] == 'i' && outbuf[3] == 't') {
 			clean_exit(); //EXIT_SUCCESS
 		}
+		#ifdef PID1
 		if (outlen == 4 && outbuf[0] == 'p' && outbuf[1] == 'o' && outbuf[2] == 'o' && outbuf[3] == 'f' && getpid() == 1) { // pid == 1
 			//print("System is going Down Now\n");
 			return -3;
 		}
+		#endif
 
 		struct termios tos;
 		ioctl(TCGETS, &tos) tos.c_lflag |= (ICANON | ECHO); ioctl(TCSETS, &tos)
@@ -192,7 +199,13 @@ while (1) {
 }}
 
 int main(int argc, char* argv[]) {
+
+	#if defined(__GNUC__) || defined(__clang__)
 	char **env = &argv[argc + 1];
+	#else
+	char **env = 0;
+	#endif
+
 	init_term();
 	char inbuf;
 	unsigned char outbuf[1000];

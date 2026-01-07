@@ -11,6 +11,8 @@ _start:
 	.globl	main                            # -- Begin function main
 	.type	main,@function
 main:                                   # @main
+.Lmain$local:
+	.type	.Lmain$local,@function
 # %bb.0:                                # %entry
 	pushq	%rbp
 	pushq	%r15
@@ -18,10 +20,10 @@ main:                                   # @main
 	pushq	%r13
 	pushq	%r12
 	pushq	%rbx
-	subq	$1208, %rsp                     # imm = 0x4B8
+	subq	$1192, %rsp                     # imm = 0x4A8
 	movq	%rsi, 16(%rsp)                  # 8-byte Spill
 	movl	%edi, 12(%rsp)                  # 4-byte Spill
-	leaq	80(%rsp), %rdx
+	leaq	64(%rsp), %rdx
 	pushq	$16
 	popq	%r8
 	movl	$21505, %esi                    # imm = 0x5401
@@ -39,249 +41,119 @@ main:                                   # @main
 	syscall
 
 	#NO_APP
-	leaq	208(%rsp), %rsi
+	leaq	192(%rsp), %rsi
 	movq	$2, (%rsi)
 	pushq	$2
-	popq	%r9
+	popq	%rdi
 	pushq	$8
 	popq	%r10
 	pushq	$14
 	popq	%rax
-	movq	%r9, %rdi
 	xorl	%edx, %edx
 	#APP
 	syscall
 
 	#NO_APP
+	leaq	.L.str(%rip), %rsi
 	pushq	$10
 	popq	%rdx
 	pushq	$1
-	popq	%rbp
-	movl	$.L.str, %esi
-	movq	%rbp, %rdi
-	movq	%rbp, %rax
+	popq	%r13
+	movq	%r13, %rdi
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	leaq	11(%rsp), %rbx
+	leaq	11(%rsp), %r8
+	pushq	$3
+	popq	%rbx
+	leaq	.L.str.7(%rip), %rbp
+	leaq	.L.str.6(%rip), %r14
+	pushq	$7
+	popq	%r9
 .LBB0_1:                                # %while.cond
                                         # =>This Loop Header: Depth=1
                                         #     Child Loop BB0_2 Depth 2
-                                        #       Child Loop BB0_10 Depth 3
-                                        #         Child Loop BB0_13 Depth 4
-                                        #     Child Loop BB0_35 Depth 2
-                                        #     Child Loop BB0_57 Depth 2
-                                        #     Child Loop BB0_70 Depth 2
-	xorl	%r8d, %r8d
+                                        #     Child Loop BB0_25 Depth 2
+                                        #     Child Loop BB0_43 Depth 2
+                                        #     Child Loop BB0_55 Depth 2
+	xorl	%r10d, %r10d
 	xorl	%eax, %eax
 .LBB0_2:                                # %while.body.i
                                         #   Parent Loop BB0_1 Depth=1
-                                        # =>  This Loop Header: Depth=2
-                                        #       Child Loop BB0_10 Depth 3
-                                        #         Child Loop BB0_13 Depth 4
-	movq	%rax, %r14
+                                        # =>  This Inner Loop Header: Depth=2
+	movq	%rax, %r15
 	xorl	%edi, %edi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
+	movq	%r8, %rsi
+	movq	%r13, %rdx
 	xorl	%eax, %eax
 	#APP
 	syscall
 
 	#NO_APP
 	testq	%rax, %rax
-	jle	.LBB0_74
+	jle	.LBB0_59
 # %bb.3:                                # %if.end.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	movq	%r8, %r10
+	movq	%r10, %r12
 	movzbl	11(%rsp), %ecx
 	cmpl	$3, %ecx
-	movq	%r14, %rax
+	movq	%r15, %rax
 	je	.LBB0_2
 # %bb.4:                                # %if.end.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$9, %ecx
-	je	.LBB0_9
+	movq	%r12, %r10
+	movq	%r15, %rax
+	je	.LBB0_2
 # %bb.5:                                # %if.end.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$27, %ecx
-	je	.LBB0_19
+	je	.LBB0_9
 # %bb.6:                                # %if.end.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$127, %ecx
-	jne	.LBB0_25
+	jne	.LBB0_15
 # %bb.7:                                # %if.then3.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	testq	%r10, %r10
-	movl	$0, %r8d
-	movq	%r14, %rax
+	testq	%r12, %r12
+	movl	$0, %r10d
+	movq	%r15, %rax
 	je	.LBB0_2
 # %bb.8:                                # %if.end7.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	leaq	-1(%r10), %r8
-	cmpq	%r14, %r10
-	cmoveq	%r8, %r14
-	movb	$32, 207(%rsp,%r10)
-	movl	$.L.str.6, %esi
-	movq	%rbp, %rdi
-	pushq	$7
-	popq	%rdx
-	movq	%rbp, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movq	%r14, %rax
-	jmp	.LBB0_2
-.LBB0_9:                                # %if.then24.i
-                                        #   in Loop: Header=BB0_2 Depth=2
-	movq	%r10, 24(%rsp)                  # 8-byte Spill
-	movq	%r14, 32(%rsp)                  # 8-byte Spill
-	movl	$.L.str.7, %edi
-	movl	$65536, %esi                    # imm = 0x10000
-	movq	%r9, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movq	%rax, %r8
-	movl	$.L.str.8, %esi
-	movq	%rbp, %rdi
+	leaq	-1(%r12), %r10
+	cmpq	%r15, %r12
+	cmoveq	%r10, %r15
+	movb	$32, 191(%rsp,%r12)
+	movq	%r13, %rdi
+	movq	%r14, %rsi
 	movq	%r9, %rdx
-	movq	%rbp, %rax
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	movl	$.L.str.14, %esi
-	movq	%rbp, %rdx
-	movq	%rbp, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movslq	%r8d, %r15
-	xorl	%r13d, %r13d
-.LBB0_10:                               # %for.cond.i.i
-                                        #   Parent Loop BB0_1 Depth=1
-                                        #     Parent Loop BB0_2 Depth=2
-                                        # =>    This Loop Header: Depth=3
-                                        #         Child Loop BB0_13 Depth 4
-	cmpl	$60, %r13d
-	je	.LBB0_18
-# %bb.11:                               # %for.body.i.i
-                                        #   in Loop: Header=BB0_10 Depth=3
-	movq	%r15, %rdi
-	leaq	80(%rsp), %rsi
-	pushq	$40
-	popq	%rdx
-	pushq	$78
-	popq	%rax
-	#APP
-	syscall
-
-	#NO_APP
-	movq	%rax, %r14
-	decl	%eax
-	cmpl	$39, %eax
-	ja	.LBB0_18
-# %bb.12:                               # %while.cond.i.i.preheader
-                                        #   in Loop: Header=BB0_10 Depth=3
-	xorl	%eax, %eax
-.LBB0_13:                               # %while.cond.i.i
-                                        #   Parent Loop BB0_1 Depth=1
-                                        #     Parent Loop BB0_2 Depth=2
-                                        #       Parent Loop BB0_10 Depth=3
-                                        # =>      This Inner Loop Header: Depth=4
-	cmpl	%r14d, %eax
-	jge	.LBB0_17
-# %bb.14:                               # %while.body.i.i
-                                        #   in Loop: Header=BB0_13 Depth=4
-	movl	%eax, %ecx
-	leaq	98(%rsp,%rcx), %rbx
-	movzwl	-2(%rbx), %r12d
-	addl	%eax, %r12d
-	cmpb	$46, (%rbx)
-	movl	%r12d, %eax
-	je	.LBB0_13
-# %bb.15:                               # %land.lhs.true.i.i
-                                        #   in Loop: Header=BB0_13 Depth=4
-	movl	$269, %eax                      # imm = 0x10D
-	movq	%r15, %rdi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
-	#APP
-	syscall
-
-	#NO_APP
-	testq	%rax, %rax
-	movl	%r12d, %eax
-	jne	.LBB0_13
-# %bb.16:                               # %while.cond.i.preheader
-                                        #   in Loop: Header=BB0_13 Depth=4
-	movq	%rbx, %rdi
-	callq	strlen
-	movq	%rbp, %rdi
-	movq	%rbx, %rsi
-	movq	%rax, %rdx
-	movq	%rbp, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movl	$.L.str.14, %esi
-	movq	%rbp, %rdx
-	movq	%rbp, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movl	%r12d, %eax
-	jmp	.LBB0_13
-.LBB0_17:                               # %for.inc.i.i
-                                        #   in Loop: Header=BB0_10 Depth=3
-	incl	%r13d
-	jmp	.LBB0_10
-.LBB0_18:                               # %tab_completion.exit.i
-                                        #   in Loop: Header=BB0_2 Depth=2
-	movl	$.L.str.9, %esi
-	movq	%rbp, %rdi
-	pushq	$2
-	popq	%r9
-	movq	%r9, %rdx
-	movq	%rbp, %rax
-	#APP
-	syscall
-
-	#NO_APP
-	movq	%r15, %rdi
-	pushq	$3
-	popq	%rax
-	#APP
-	syscall
-
-	#NO_APP
-	movq	24(%rsp), %r8                   # 8-byte Reload
-	movq	32(%rsp), %rax                  # 8-byte Reload
-	leaq	11(%rsp), %rbx
+	movq	%r15, %rax
 	jmp	.LBB0_2
-.LBB0_19:                               # %if.then52.i
+.LBB0_9:                                # %if.then29.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	xorl	%edi, %edi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
+	movq	%r8, %rsi
+	movq	%r13, %rdx
 	xorl	%eax, %eax
 	#APP
 	syscall
 
 	#NO_APP
 	cmpb	$91, 11(%rsp)
-	jne	.LBB0_67
-# %bb.20:                               # %if.then62.i
+	jne	.LBB0_30
+# %bb.10:                               # %if.then39.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	xorl	%edi, %edi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
+	movq	%r8, %rsi
+	movq	%r13, %rdx
 	xorl	%eax, %eax
 	#APP
 	syscall
@@ -290,241 +162,215 @@ main:                                   # @main
 	movzbl	11(%rsp), %ecx
 	leal	-65(%rcx), %eax
 	cmpl	$2, %eax
-	movq	%r10, %r8
-	movq	%r14, %rax
+	movq	%r12, %r10
+	movq	%r15, %rax
 	jb	.LBB0_2
-# %bb.21:                               # %if.then62.i
+# %bb.11:                               # %if.then39.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$67, %ecx
-	je	.LBB0_29
-# %bb.22:                               # %if.then62.i
+	je	.LBB0_19
+# %bb.12:                               # %if.then39.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$68, %ecx
-	jne	.LBB0_67
-# %bb.23:                               # %if.then72.i
+	jne	.LBB0_30
+# %bb.13:                               # %if.then49.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	testq	%r10, %r10
-	movl	$0, %r8d
-	movq	%r14, %rax
+	testq	%r12, %r12
+	movl	$0, %r10d
+	movq	%r15, %rax
 	je	.LBB0_2
-# %bb.24:                               # %if.end76.i
+# %bb.14:                               # %if.end53.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	decq	%r10
-	movl	$.L.str.10, %esi
-	movq	%rbp, %rdi
-	pushq	$3
-	popq	%rdx
-	movq	%rbp, %rax
+	decq	%r12
+	movq	%r13, %rdi
+	movq	%rbp, %rsi
+	movq	%rbx, %rdx
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	jmp	.LBB0_31
-.LBB0_25:                               # %if.end116.i
+	jmp	.LBB0_21
+.LBB0_15:                               # %if.end93.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	movq	%rbp, %rdi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
-	movq	%rbp, %rax
+	movq	%r13, %rdi
+	movq	%r8, %rsi
+	movq	%r13, %rdx
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
 	movzbl	11(%rsp), %eax
 	cmpl	$35, %eax
-	je	.LBB0_32
-# %bb.26:                               # %if.end116.i
+	je	.LBB0_22
+# %bb.16:                               # %if.end93.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpl	$10, %eax
-	je	.LBB0_32
-# %bb.27:                               # %if.end320.i
+	je	.LBB0_22
+# %bb.17:                               # %if.end267.i
                                         #   in Loop: Header=BB0_2 Depth=2
 	cmpb	$31, %al
-	jle	.LBB0_39
-# %bb.28:                               # %if.end331.i
+	jle	.LBB0_29
+# %bb.18:                               # %if.end278.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	movb	%al, 208(%rsp,%r10)
+	movb	%al, 192(%rsp,%r12)
 	xorl	%eax, %eax
-	cmpq	%r14, %r10
+	cmpq	%r15, %r12
 	sete	%al
-	addq	%r14, %rax
-	incq	%r10
-	movq	%r10, %r8
+	addq	%r15, %rax
+	incq	%r12
+	movq	%r12, %r10
 	jmp	.LBB0_2
-.LBB0_29:                               # %if.then88.i
+.LBB0_19:                               # %if.then65.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	cmpq	%r14, %r10
-	movq	%r10, %r8
-	movq	%r10, %rax
+	cmpq	%r15, %r12
+	movq	%r12, %r10
+	movq	%r12, %rax
 	je	.LBB0_2
-# %bb.30:                               # %if.end92.i
+# %bb.20:                               # %if.end69.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	incq	%r10
-	movl	$.L.str.11, %esi
-	movq	%rbp, %rdi
-	pushq	$3
-	popq	%rdx
-	movq	%rbp, %rax
+	incq	%r12
+	movq	%r13, %rdi
+	leaq	.L.str.8(%rip), %rsi
+	movq	%rbx, %rdx
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-.LBB0_31:                               # %while.body.i
+.LBB0_21:                               # %while.body.i
                                         #   in Loop: Header=BB0_2 Depth=2
-	movq	%r10, %r8
-	movq	%r14, %rax
+	movq	%r12, %r10
+	movq	%r15, %rax
 	jmp	.LBB0_2
-.LBB0_32:                               # %if.then129.i
+.LBB0_22:                               # %if.then106.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$32, 207(%rsp,%r14)
-	jne	.LBB0_35
-# %bb.33:                               # %if.then134.i
+	cmpb	$32, 191(%rsp,%r15)
+	jne	.LBB0_25
+# %bb.23:                               # %if.then111.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	movb	$0, 207(%rsp,%r14)
-	decq	%r14
-	jmp	.LBB0_35
-.LBB0_34:                               # %while.body142.i
-                                        #   in Loop: Header=BB0_35 Depth=2
+	movb	$0, 191(%rsp,%r15)
+	decq	%r15
+	jmp	.LBB0_25
+.LBB0_24:                               # %while.body119.i
+                                        #   in Loop: Header=BB0_25 Depth=2
 	xorl	%edi, %edi
-	movq	%rbx, %rsi
-	movq	%rbp, %rdx
+	movq	%r8, %rsi
+	movq	%r13, %rdx
 	xorl	%eax, %eax
 	#APP
 	syscall
 
 	#NO_APP
-	movq	%rbp, %rdi
-	movq	%rbp, %rax
+	movq	%r13, %rdi
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
 	movb	11(%rsp), %al
-.LBB0_35:                               # %while.cond138.i
+.LBB0_25:                               # %while.cond115.i
                                         #   Parent Loop BB0_1 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
 	cmpb	$10, %al
-	jne	.LBB0_34
-# %bb.36:                               # %while.end.i
+	jne	.LBB0_24
+# %bb.26:                               # %while.end.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	testq	%r14, %r14
-	je	.LBB0_68
-# %bb.37:                               # %if.end158.i
+	testq	%r15, %r15
+	je	.LBB0_53
+# %bb.27:                               # %if.end135.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	movzbl	208(%rsp), %ecx
+	movb	192(%rsp), %al
+	movb	193(%rsp), %cl
+	movl	%eax, %edx
+	xorb	$99, %dl
 	movl	%ecx, %esi
-	xorb	$99, %sil
-	movb	209(%rsp), %dl
-	movb	210(%rsp), %al
+	xorb	$100, %sil
+	orb	%dl, %sil
+	movb	194(%rsp), %dl
 	movl	%edx, %edi
-	xorb	$100, %dil
+	xorb	$32, %dil
 	orb	%sil, %dil
-	movl	%eax, %esi
-	xorb	$32, %sil
-	orb	%dil, %sil
-	jne	.LBB0_40
-# %bb.38:                               # %if.then172.i
+	jne	.LBB0_31
+# %bb.28:                               # %if.then149.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	leaq	211(%rsp), %rdi
+	leaq	195(%rsp), %rdi
 	pushq	$80
 	popq	%rax
 	#APP
 	syscall
 
 	#NO_APP
-	jmp	.LBB0_62
-.LBB0_39:                               # %if.then324.i
+	jmp	.LBB0_48
+.LBB0_29:                               # %if.then271.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.14, %esi
-	movq	%rbp, %rdi
-	movq	%rbp, %rdx
-	movq	%rbp, %rax
+	movq	%r13, %rdi
+	leaq	.L.str.11(%rip), %rsi
+	movq	%r13, %rdx
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	jmp	.LBB0_67
-.LBB0_40:                               # %if.end177.i
+.LBB0_30:                               # %process_line.exit.thread
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpq	$4, %r14
-	je	.LBB0_43
-# %bb.41:                               # %if.end177.i
+	leaq	.L.str.1(%rip), %rsi
+	jmp	.LBB0_54
+.LBB0_31:                               # %if.end154.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpq	$1, %r14
-	jne	.LBB0_52
-# %bb.42:                               # %land.lhs.true180.i
+	cmpq	$4, %r15
+	je	.LBB0_34
+# %bb.32:                               # %if.end154.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpl	$113, %ecx
-	je	.LBB0_74
-	jmp	.LBB0_52
-.LBB0_43:                               # %land.lhs.true188.i
+	cmpq	$1, %r15
+	jne	.LBB0_38
+# %bb.33:                               # %land.lhs.true157.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpl	$112, %ecx
-	je	.LBB0_48
-# %bb.44:                               # %land.lhs.true188.i
+	cmpb	$113, %al
+	jne	.LBB0_38
+	jmp	.LBB0_59
+.LBB0_34:                               # %land.lhs.true165.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpl	$101, %ecx
-	jne	.LBB0_52
-# %bb.45:                               # %land.lhs.true193.i
+	cmpb	$101, %al
+	jne	.LBB0_38
+# %bb.35:                               # %land.lhs.true165.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$120, %dl
-	jne	.LBB0_52
-# %bb.46:                               # %land.lhs.true193.i
+	cmpb	$120, %cl
+	jne	.LBB0_38
+# %bb.36:                               # %land.lhs.true165.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$105, %al
-	jne	.LBB0_52
-# %bb.47:                               # %land.lhs.true193.i
+	cmpb	$105, %dl
+	jne	.LBB0_38
+# %bb.37:                               # %land.lhs.true165.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$116, 211(%rsp)
-	jne	.LBB0_52
-	jmp	.LBB0_74
-.LBB0_48:                               # %land.lhs.true217.i
-                                        #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$111, %dl
-	jne	.LBB0_52
-# %bb.49:                               # %land.lhs.true217.i
-                                        #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$111, %al
-	jne	.LBB0_52
-# %bb.50:                               # %land.lhs.true217.i
-                                        #   in Loop: Header=BB0_1 Depth=1
-	cmpb	$102, 211(%rsp)
-	jne	.LBB0_52
-# %bb.51:                               # %land.lhs.true232.i
-                                        #   in Loop: Header=BB0_1 Depth=1
-	pushq	$39
-	popq	%rax
-	#APP
-	syscall
-
-	#NO_APP
-	cmpq	$1, %rax
-	je	.LBB0_67
-.LBB0_52:                               # %if.end239.i
+	cmpb	$116, 195(%rsp)
+	je	.LBB0_59
+.LBB0_38:                               # %if.end186.i
                                         #   in Loop: Header=BB0_1 Depth=1
 	movl	$21505, %esi                    # imm = 0x5401
 	xorl	%edi, %edi
-	leaq	44(%rsp), %rdx
+	leaq	28(%rsp), %rdx
 	pushq	$16
-	popq	%r8
-	movq	%r8, %rax
+	popq	%r10
+	movq	%r10, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	orb	$10, 56(%rsp)
+	orb	$10, 40(%rsp)
 	movl	$21506, %esi                    # imm = 0x5402
 	xorl	%edi, %edi
-	movq	%r8, %rax
+	movq	%r10, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	movl	$.L.str.12, %esi
-	movq	%rbp, %rdi
+	movq	%r13, %rdi
+	leaq	.L.str.9(%rip), %rsi
 	pushq	$5
 	popq	%rdx
-	movq	%rbp, %rax
+	movq	%r13, %rax
 	#APP
 	syscall
 
@@ -536,11 +382,11 @@ main:                                   # @main
 
 	#NO_APP
 	testl	%eax, %eax
-	je	.LBB0_75
-# %bb.53:                               # %if.end275.i
+	je	.LBB0_60
+# %bb.39:                               # %if.end222.i
                                         #   in Loop: Header=BB0_1 Depth=1
 	movslq	%eax, %rdi
-	leaq	80(%rsp), %rsi
+	leaq	64(%rsp), %rsi
 	xorl	%edx, %edx
 	xorl	%r10d, %r10d
 	pushq	$61
@@ -550,128 +396,125 @@ main:                                   # @main
 
 	#NO_APP
 	testq	%rax, %rax
-	jle	.LBB0_56
-# %bb.54:                               # %if.end292.i
+	jle	.LBB0_42
+# %bb.40:                               # %if.end239.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	andb	$-11, 56(%rsp)
+	andb	$-11, 40(%rsp)
 	movl	$21506, %esi                    # imm = 0x5402
 	xorl	%edi, %edi
-	leaq	44(%rsp), %rdx
+	leaq	28(%rsp), %rdx
 	pushq	$16
 	popq	%rax
 	#APP
 	syscall
 
 	#NO_APP
-	movl	$.L.str.13, %esi
-	movq	%rbp, %rdi
+	movq	%r13, %rdi
+	leaq	.L.str.10(%rip), %rsi
 	pushq	$5
 	popq	%rdx
-	movq	%rbp, %rax
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	movl	80(%rsp), %eax
+	movl	64(%rsp), %eax
 	testb	$127, %al
-	je	.LBB0_61
-# %bb.55:                               # %if.then308.i
+	je	.LBB0_47
+# %bb.41:                               # %if.then255.i
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.14, %esi
-	movq	%rbp, %rdi
-	movq	%rbp, %rdx
-	movq	%rbp, %rax
+	movq	%r13, %rdi
+	leaq	.L.str.11(%rip), %rsi
+	movq	%r13, %rdx
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
 	pushq	$-1
-	jmp	.LBB0_60
-.LBB0_56:                               # %while.cond287.i.preheader
+	jmp	.LBB0_46
+.LBB0_42:                               # %while.cond234.i.preheader
                                         #   in Loop: Header=BB0_1 Depth=1
-	movq	%r14, %rax
-.LBB0_57:                               # %while.cond287.i
+	movq	%r15, %rax
+.LBB0_43:                               # %while.cond234.i
                                         #   Parent Loop BB0_1 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
 	subq	$1, %rax
-	jb	.LBB0_59
-# %bb.58:                               # %while.body288.i
-                                        #   in Loop: Header=BB0_57 Depth=2
-	movb	$0, 207(%rsp,%r14)
-	movq	%rax, %r14
-	jmp	.LBB0_57
-.LBB0_59:                               #   in Loop: Header=BB0_1 Depth=1
+	jb	.LBB0_45
+# %bb.44:                               # %while.body235.i
+                                        #   in Loop: Header=BB0_43 Depth=2
+	movb	$0, 191(%rsp,%r15)
+	movq	%rax, %r15
+	jmp	.LBB0_43
+.LBB0_45:                               #   in Loop: Header=BB0_1 Depth=1
 	pushq	$-3
-.LBB0_60:                               # %process_line.exit
+.LBB0_46:                               # %process_line.exit
                                         #   in Loop: Header=BB0_1 Depth=1
 	popq	%rax
-	jmp	.LBB0_62
-.LBB0_61:                               # %if.end315.i
+	jmp	.LBB0_48
+.LBB0_47:                               # %if.end262.i
                                         #   in Loop: Header=BB0_1 Depth=1
 	movzbl	%ah, %eax
-.LBB0_62:                               # %process_line.exit
+.LBB0_48:                               # %process_line.exit
                                         #   in Loop: Header=BB0_1 Depth=1
 	cmpq	$-3, %rax
-	je	.LBB0_67
-# %bb.63:                               # %process_line.exit
+	leaq	.L.str.1(%rip), %rsi
+	je	.LBB0_54
+# %bb.49:                               # %process_line.exit
                                         #   in Loop: Header=BB0_1 Depth=1
 	cmpq	$60, %rax
-	je	.LBB0_72
-# %bb.64:                               # %process_line.exit
+	je	.LBB0_57
+# %bb.50:                               # %process_line.exit
                                         #   in Loop: Header=BB0_1 Depth=1
 	testq	%rax, %rax
-	je	.LBB0_68
-# %bb.65:                               # %process_line.exit
+	je	.LBB0_53
+# %bb.51:                               # %process_line.exit
                                         #   in Loop: Header=BB0_1 Depth=1
 	cmpq	$-1, %rax
-	jne	.LBB0_73
-# %bb.66:                               # %sw.bb1
+	jne	.LBB0_58
+# %bb.52:                               # %sw.bb1
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.2, %esi
-	jmp	.LBB0_69
-.LBB0_67:                               # %process_line.exit.thread
+	leaq	.L.str.2(%rip), %rsi
+	jmp	.LBB0_54
+.LBB0_53:                               # %sw.bb3
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.1, %esi
-	jmp	.LBB0_69
-.LBB0_68:                               # %sw.bb3
+	leaq	.L.str.4(%rip), %rsi
+.LBB0_54:                               # %sw.epilog
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.4, %esi
-.LBB0_69:                               # %sw.epilog
-                                        #   in Loop: Header=BB0_1 Depth=1
-	movq	%rbp, %rdi
+	movq	%r13, %rdi
 	pushq	$14
 	popq	%rdx
-	movq	%rbp, %rax
+	movq	%r13, %rax
 	#APP
 	syscall
 
 	#NO_APP
-	leaq	208(%rsp), %rax
-.LBB0_70:                               # %while.cond11
+	leaq	192(%rsp), %rax
+.LBB0_55:                               # %while.cond11
                                         #   Parent Loop BB0_1 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
 	cmpb	$0, (%rax)
 	je	.LBB0_1
-# %bb.71:                               # %while.body12
-                                        #   in Loop: Header=BB0_70 Depth=2
+# %bb.56:                               # %while.body12
+                                        #   in Loop: Header=BB0_55 Depth=2
 	movb	$0, (%rax)
 	incq	%rax
-	jmp	.LBB0_70
-.LBB0_72:                               # %sw.bb2
+	jmp	.LBB0_55
+.LBB0_57:                               # %sw.bb2
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.3, %esi
-	jmp	.LBB0_69
-.LBB0_73:                               # %sw.default
+	leaq	.L.str.3(%rip), %rsi
+	jmp	.LBB0_54
+.LBB0_58:                               # %sw.default
                                         #   in Loop: Header=BB0_1 Depth=1
-	movl	$.L.str.5, %esi
-	jmp	.LBB0_69
-.LBB0_74:                               # %if.then.i
+	leaq	.L.str.5(%rip), %rsi
+	jmp	.LBB0_54
+.LBB0_59:                               # %if.then.i
 	callq	clean_exit
-.LBB0_75:                               # %if.then264.i
+.LBB0_60:                               # %if.then211.i
 	movslq	12(%rsp), %rax                  # 4-byte Folded Reload
 	movq	16(%rsp), %rcx                  # 8-byte Reload
 	leaq	8(%rcx,%rax,8), %r8
-	leaq	80(%rsp), %rsi
+	leaq	64(%rsp), %rsi
 	andq	$0, (%rsi)
 	pushq	$2
 	popq	%rdi
@@ -684,8 +527,8 @@ main:                                   # @main
 	syscall
 
 	#NO_APP
-	leaq	208(%rsp), %rdi
-	movq	%r14, %rsi
+	leaq	192(%rsp), %rdi
+	movq	%r15, %rsi
 	movq	%r8, %rdx
 	callq	exec
 	pushq	$60
@@ -697,6 +540,7 @@ main:                                   # @main
 	#NO_APP
 .Lfunc_end0:
 	.size	main, .Lfunc_end0-main
+	.size	.Lmain$local, .Lfunc_end0-main
                                         # -- End function
 	.type	exec,@function                  # -- Begin function exec
 exec:                                   # @exec
@@ -785,10 +629,10 @@ exec:                                   # @exec
 	#NO_APP
 	jmp	.LBB1_15
 .LBB1_13:                               # %if.then
+	leaq	.L.str.12(%rip), %rsi
 	movq	%rsp, %r12
 	pushq	$5
 	popq	%rdx
-	movl	$.L.str.15, %esi
 	movq	%r12, %rdi
 	callq	memcpy
 	leaq	5(%rsp), %rdi
@@ -845,40 +689,25 @@ clean_exit:                             # @clean_exit
 .Lfunc_end2:
 	.size	clean_exit, .Lfunc_end2-clean_exit
                                         # -- End function
-	.type	strlen,@function                # -- Begin function strlen
-strlen:                                 # @strlen
-# %bb.0:                                # %entry
-	pushq	$-1
-	popq	%rax
-.LBB3_1:                                # %while.cond
-                                        # =>This Inner Loop Header: Depth=1
-	cmpb	$0, 1(%rdi,%rax)
-	leaq	1(%rax), %rax
-	jne	.LBB3_1
-# %bb.2:                                # %while.end
-	retq
-.Lfunc_end3:
-	.size	strlen, .Lfunc_end3-strlen
-                                        # -- End function
 	.type	memcpy,@function                # -- Begin function memcpy
 memcpy:                                 # @memcpy
 # %bb.0:                                # %entry
 	movq	%rdi, %rax
 	xorl	%ecx, %ecx
-.LBB4_1:                                # %for.cond
+.LBB3_1:                                # %for.cond
                                         # =>This Inner Loop Header: Depth=1
 	cmpq	%rcx, %rdx
-	je	.LBB4_3
+	je	.LBB3_3
 # %bb.2:                                # %for.body
-                                        #   in Loop: Header=BB4_1 Depth=1
+                                        #   in Loop: Header=BB3_1 Depth=1
 	movb	(%rsi,%rcx), %dil
 	movb	%dil, (%rax,%rcx)
 	incq	%rcx
-	jmp	.LBB4_1
-.LBB4_3:                                # %for.end
+	jmp	.LBB3_1
+.LBB3_3:                                # %for.end
 	retq
-.Lfunc_end4:
-	.size	memcpy, .Lfunc_end4-memcpy
+.Lfunc_end3:
+	.size	memcpy, .Lfunc_end3-memcpy
                                         # -- End function
 	.type	.L.str,@object                  # @.str
 	.section	.rodata.str1.1,"aMS",@progbits,1
@@ -918,47 +747,32 @@ memcpy:                                 # @memcpy
 
 	.type	.L.str.7,@object                # @.str.7
 .L.str.7:
-	.asciz	"/bin"
-	.size	.L.str.7, 5
+	.asciz	"\033[D"
+	.size	.L.str.7, 4
 
 	.type	.L.str.8,@object                # @.str.8
 .L.str.8:
-	.asciz	"\0337"
-	.size	.L.str.8, 3
+	.asciz	"\033[C"
+	.size	.L.str.8, 4
 
 	.type	.L.str.9,@object                # @.str.9
 .L.str.9:
-	.asciz	"\0338"
-	.size	.L.str.9, 3
+	.asciz	"\033[0 q"
+	.size	.L.str.9, 6
 
 	.type	.L.str.10,@object               # @.str.10
 .L.str.10:
-	.asciz	"\033[D"
-	.size	.L.str.10, 4
+	.asciz	"\033[5 q"
+	.size	.L.str.10, 6
 
 	.type	.L.str.11,@object               # @.str.11
 .L.str.11:
-	.asciz	"\033[C"
-	.size	.L.str.11, 4
+	.asciz	"\n"
+	.size	.L.str.11, 2
 
 	.type	.L.str.12,@object               # @.str.12
 .L.str.12:
-	.asciz	"\033[0 q"
-	.size	.L.str.12, 6
-
-	.type	.L.str.13,@object               # @.str.13
-.L.str.13:
-	.asciz	"\033[5 q"
-	.size	.L.str.13, 6
-
-	.type	.L.str.14,@object               # @.str.14
-.L.str.14:
-	.asciz	"\n"
-	.size	.L.str.14, 2
-
-	.type	.L.str.15,@object               # @.str.15
-.L.str.15:
 	.asciz	"/bin/"
-	.size	.L.str.15, 6
+	.size	.L.str.12, 6
 
 	.section	".note.GNU-stack","",@progbits
