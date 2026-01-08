@@ -1,5 +1,5 @@
-pid1sh installation:
-
+compiling:
+---
 - best option:
 ```bash
 gcc -c -o pid1sh.o pid1sh.c -nostdlib -fno-stack-protector -Oz -static -Qn -fno-pic -fno-asynchronous-unwind-tables
@@ -57,15 +57,14 @@ it should display:
 2000	pid1sh
 ❯ 
 ```
-
-
+---
 TODO tcc compiles but doesn't run: `tcc -o pid1sh pid1sh.c -nostdlib -static && du -b pid1sh && ./pid1sh`
 it only displays:
 ```
 6320	a.out
 ```
 
-you're in the shell now, have fun
+you're in the shell now, have fun.
 exit with `q` or `exit`
 
 testing:
