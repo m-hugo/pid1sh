@@ -40,6 +40,7 @@
 #define close(fd) my_syscall1(__NR_close, fd);
 #define execve(path, argv, env)  my_syscall3(__NR_execve, path, argv, env);
 #define getpid() my_syscall0(__NR_getpid)
+#define getcwd255(buf) my_syscall2(__NR_getcwd, buf, 255);
 #define fork() my_syscall0(__NR_fork);
 #define sigprocmask(mode, new, old) my_syscall4(__NR_rt_sigprocmask, mode, new, old, 8);
 #define wait4(pid, b, c, d) my_syscall4(__NR_wait4, pid, b, c, d)

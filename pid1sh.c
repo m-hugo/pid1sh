@@ -53,14 +53,23 @@ static inline void exec(unsigned char outbuf[255], long outlen, char* env[]){
 		totalen+=sndlen; argc++;
 	}
 	argv[argc] = 0;
-	if (argv[0][0] != '/'){
-		char path[100];
-		memcpy(path, "/bin/", 5);
-		memcpy(path+5, argv[0], firstlen);
-		path[firstlen+5] = 0;
-		execve(path, argv, env)
-	} else {
-		execve(argv[0], argv, env)
+	char path[255+255];
+	switch(argv[0][0]){
+		case '/':
+			execve(argv[0], argv, env)
+			break;
+		case '.':
+		if (argv[0][1] == '/'){
+			int pathlen = getcwd255(path); // len of /home/hugo/
+			memcpy(path+pathlen-1, argv[0]+1, firstlen);
+			execve(path, argv, env)
+		}
+		break;
+		default:
+			memcpy(path, "/bin/", 5);
+			memcpy(path+5, argv[0], firstlen);
+			path[firstlen+5] = 0;
+			execve(path, argv, env)
 	}
 }
 
@@ -143,14 +152,21 @@ while (1) {
 		print("\n");
 		return -1;
 	}
-	printn(&inbuf, 1);
-	if (inbuf == '\n' || inbuf == '#'){ //Commented line or enter
+	if (inbuf == '&'){
+		getchar(&inbuf)
+		print("\n")
+	} else{
+		printn(&inbuf, 1)
+	}
+
+	if (inbuf == '\n' || inbuf == '#' || inbuf == '&'){ //Commented line or enter
 		if (outbuf[outlen-1] == ' ') {outlen--; outbuf[outlen]= 0;}
 		//outbuf[outlen]=0; // hopefully same byte as the final argc argv[0][firstlen] or argv[argc][sndlen]
-		while (inbuf!='\n'){
+		while (inbuf!='\n' && inbuf != '&'){
 			getchar(&inbuf)
 			printn(&inbuf, 1);
 		}
+		if (inbuf == '&') getchar(&inbuf)
 		if (outlen == 0) return 0;
 		if (outbuf[0] == 'c' && outbuf[1] == 'd' && outbuf[2] == ' '){
 			return chdir(outbuf+3)
@@ -223,6 +239,6 @@ int main(int argc, char* argv[]) {
 				prompt = "[31mx❯[0m "; //red
 		}
 		printn(prompt, 14);
-		//unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
+		unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
 	}
 }
