@@ -3,8 +3,7 @@
 static inline void init_term(){
 	struct termios tos;
 	ioctl(TCGETS, &tos)
-	tos.c_lflag &= (~ICANON & ~ECHO); //tos.set(not ICANON & not ECHO)  & ~ISIG
-//	tos.c_lflag &= ~(ICANON | ECHO); //tos.disable(ICANON & ECHO)
+	tos.c_lflag &= (~ICANON & ~ECHO & ~ISIG); // same as tos.c_lflag &= ~(ICANON | ECHO | ISIG);
 	ioctl(TCSETS, &tos)
 	sigset_t set;
 	__sigemptyset(&set);
@@ -28,7 +27,7 @@ static inline void print_env(char* env[]){
 static inline void clean_exit(){
 	struct termios tos;
 	ioctl(TCGETS, &tos)
-	tos.c_lflag |= (ICANON | ECHO);
+	tos.c_lflag |= (ICANON | ECHO | ISIG);
 	ioctl(TCSETS, &tos)
 	exit(0)
 }
@@ -141,7 +140,8 @@ while (1) {
 	}
 	if (inbuf == 3){ //Ctrl+C
 		//getchar(&inbuf, 1); useless for ctrl+z
-		continue;
+		print("\n");
+		return -1;
 	}
 	printn(&inbuf, 1);
 	if (inbuf == '\n' || inbuf == '#'){ //Commented line or enter
@@ -166,7 +166,7 @@ while (1) {
 		#endif
 
 		struct termios tos;
-		ioctl(TCGETS, &tos) tos.c_lflag |= (ICANON | ECHO); ioctl(TCSETS, &tos)
+		ioctl(TCGETS, &tos) tos.c_lflag |= (ICANON | ECHO | ISIG); ioctl(TCSETS, &tos)
 		print("[0 q");
 
 		pid_t pid = fork();
@@ -179,7 +179,7 @@ while (1) {
 		}
 		int wstatus;
 		if (wait4(pid, &wstatus, 0, 0) < 1) {while (outlen) {outlen--; outbuf[outlen]= 0;} return -3;}
-		tos.c_lflag &= (~ICANON & ~ECHO); //tos.set(ICANON & ECHO)
+		tos.c_lflag &= (~ICANON & ~ECHO | ISIG);
 		ioctl(TCSETS, &tos)
 		print("[5 q");
 		if (wstatus & 0x7f) {//WTERMSIG or !WIFEXITED
