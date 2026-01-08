@@ -199,13 +199,7 @@ while (1) {
 }}
 
 int main(int argc, char* argv[]) {
-
-	#if defined(__GNUC__) || defined(__clang__)
-	char **env = &argv[argc + 1];
-	#else
-	char **env = 0;
-	#endif
-
+	char **env = get_env()
 	init_term();
 	char inbuf;
 	unsigned char outbuf[1000];
@@ -229,6 +223,6 @@ int main(int argc, char* argv[]) {
 				prompt = "[31mx❯[0m "; //red
 		}
 		printn(prompt, 14);
-		unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
+		//unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
 	}
 }

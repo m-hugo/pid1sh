@@ -13,15 +13,27 @@
 #define X_OK 1
 #define WEXITSTATUS(wstatus) (wstatus & 0xff00) >> 8;
 
-#define write(fd, s, n) my_syscall3(__NR_write, fd, s, n);
-#define read(fd, s, n) my_syscall3(__NR_read, fd, s, n);
-
 #if defined(__GNUC__) || defined(__clang__)
-#define exit(n) {my_syscall1(__NR_exit, n); __builtin_unreachable();}
+	asm(
+	".global _start\n"
+	"_start:"
+	"mov 0(%rsp),%rdi\n" // get argc
+	"lea 8(%rsp),%rsi\n"// the arguments are pushed just below, so argv = %rbp + 8
+	"jmp main"
+	);
+	#define get_env() argc + argv + 1;
+	#define exit(n) {my_syscall1(__NR_exit, n); __builtin_unreachable();}
 #else
-#define exit(n) {my_syscall1(__NR_exit, n);}
+	int main(int argc, char* argv[]);
+	void _start(){
+		main(0, NULL);
+	}
+	#define exit(n) {my_syscall1(__NR_exit, n);}
+	#define get_env() 0;
 #endif
 
+#define write(fd, s, n) my_syscall3(__NR_write, fd, s, n);
+#define read(fd, s, n) my_syscall3(__NR_read, fd, s, n);
 #define ioctl(m, t) my_syscall3(__NR_ioctl, STDIN_FILENO, m, t);
 #define chdir(d) my_syscall1(__NR_chdir, d);
 #define open(path, m) my_syscall2(__NR_open, path, m);
@@ -46,22 +58,6 @@
 #define my_syscall4(num, arg1, arg2, arg3, arg4)({ long _ret;register long _num __asm__ ("rax") = (num); register long _arg1 __asm__ ("rdi") = (long)(arg1); register long _arg2 __asm__ ("rsi") = (long)(arg2); register long _arg3 __asm__ ("rdx") = (long)(arg3); register long _arg4 __asm__ ("r10") = (long)(arg4);__asm__ volatile ( "syscall\n" : "=a"(_ret): "r"(_arg1), "r"(_arg2), "r"(_arg3), "r"(_arg4),"0"(_num) : "rcx", "r11", "memory", "cc" ); _ret;})
 #define my_syscall5(num, arg1, arg2, arg3, arg4, arg5) ({ long _ret;register long _num __asm__ ("rax") = (num); register long _arg1 __asm__ ("rdi") = (long)(arg1); register long _arg2 __asm__ ("rsi") = (long)(arg2); register long _arg3 __asm__ ("rdx") = (long)(arg3); register long _arg4 __asm__ ("r10") = (long)(arg4); register long _arg5 __asm__ ("r8") = (long)(arg5);__asm__ volatile ( "syscall\n" : "=a"(_ret): "r"(_arg1), "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5), "0"(_num) : "rcx", "r11", "memory", "cc" ); _ret;})
 #define my_syscall6(num, arg1, arg2, arg3, arg4, arg5, arg6) ({ long _ret;register long _num __asm__ ("rax") = (num); register long _arg1 __asm__ ("rdi") = (long)(arg1); register long _arg2 __asm__ ("rsi") = (long)(arg2); register long _arg3 __asm__ ("rdx") = (long)(arg3); register long _arg4 __asm__ ("r10") = (long)(arg4); register long _arg5 __asm__ ("r8") = (long)(arg5); register long _arg6 __asm__ ("r9") = (long)(arg6);__asm__ volatile ( "syscall\n" : "=a"(_ret): "r"(_arg1), "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5), "r"(_arg6), "0"(_num) : "rcx", "r11", "memory", "cc" ); _ret;})
-
-#if defined(__GNUC__) || defined(__clang__)
-asm(
-".global _start\n"
-"_start:"
-"mov 0(%rsp),%rdi\n" // get argc
-"lea 8(%rsp),%rsi\n"// the arguments are pushed just below, so argv = %rbp + 8
-"jmp main"
-);
-#else
-int main(int argc, char* argv[]);
-void _start(){
-	main(0, NULL);
-}
-#endif
-
 
 static inline void *memcpy(void *dest, const void *src, unsigned long n){
 	unsigned char *d = dest;
