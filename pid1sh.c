@@ -120,7 +120,7 @@ while (1) {
 		#endif
 		continue;
 	}
-	if (inbuf == '') { // terminal control
+	if (inbuf == 0x1B) { // terminal control
 		getchar(&inbuf)
 		if (inbuf == '[') {
 			getchar(&inbuf)
@@ -128,7 +128,6 @@ while (1) {
 				if (ptrlen == 0) continue;
 				ptrlen--;
 				print("[D");
-
 				continue;
 			}
 			if (inbuf == 'C') { //Right
@@ -141,6 +140,16 @@ while (1) {
 				continue;
 			}
 			if (inbuf == 'B') { //Down
+				continue;
+			}
+			if (inbuf == 51){ //Del
+				getchar(&inbuf)
+				if (ptrlen == outlen) continue;
+				if (ptrlen == outlen-1) {
+					outbuf[ptrlen]= 0;
+					outlen--;
+				} else outbuf[ptrlen]= ' ';
+				print(" [D");
 				continue;
 			}
 			//continue;
@@ -195,7 +204,7 @@ while (1) {
 		}
 		int wstatus;
 		if (wait4(pid, &wstatus, 0, 0) < 1) {while (outlen) {outlen--; outbuf[outlen]= 0;} return -3;}
-		tos.c_lflag &= (~ICANON & ~ECHO | ISIG);
+		tos.c_lflag &= (~ICANON & ~ECHO & ~ISIG);
 		ioctl(TCSETS, &tos)
 		print("[5 q");
 		if (wstatus & 0x7f) {//WTERMSIG or !WIFEXITED
@@ -208,6 +217,13 @@ while (1) {
 		print("\n");
 		return -3; //ctrl+z
 	};
+	if (inbuf == '\\'){
+		getchar(&inbuf)
+		if (inbuf == '\n'){
+			print("\n");
+			continue;
+		}
+	}
 	//printn(&inbuf, 1);
 	outbuf[ptrlen]=inbuf;
 	if (ptrlen == outlen) outlen++;
