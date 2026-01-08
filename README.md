@@ -45,6 +45,7 @@ it should display:
 1952	pid1sh
 ❯ 
 ```
+---
 ```bash
 clang -cc1   -o pid1sh.ll pid1sh.c  -Oz -emit-llvm -Qn -I/usr/lib/clang/21/include -I/usr/include
 clang -cc1   -o pid1sh.s  pid1sh.ll -Oz -S -Qn
