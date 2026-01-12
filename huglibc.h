@@ -1,11 +1,10 @@
-#include <signal.h>
 #include <linux/kernel.h>
 #include <linux/reboot.h>
 #include <linux/unistd.h>
 #include <linux/termios.h>
 #include <linux/fcntl.h>
-#include "libc-pointer-arith.h"
-#include "sigsetops.h"
+#include "types.h" //modified from glibc
+#include "signals_from_glibc.h" //modified from glibc
 
 #define STDOUT_FILENO 1
 #define STDIN_FILENO 0
