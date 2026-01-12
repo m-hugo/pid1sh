@@ -9,7 +9,7 @@ du -b pid1sh && ./pid1sh
 ```
 it should display:
 ```
-1960	pid1sh
+1968	pid1sh
 ❯ 
 ```
 ---
@@ -28,7 +28,7 @@ clang -o pid1sh pid1sh.c -nostdlib -fno-stack-protector -Oz -s -static -Qn -fno-
 ```
 it should display:
 ```
-2256	pid1sh
+2352	pid1sh
 ❯ 
 ```
 ---
@@ -42,7 +42,7 @@ du -b pid1sh && ./pid1sh
 ```
 it should display:
 ```
-2248	pid1sh
+2344	pid1sh
 ❯ 
 ```
 ---
@@ -55,14 +55,14 @@ du -b pid1sh && ./pid1sh
 ```
 it should display:
 ```
-2272	pid1sh
+2368	pid1sh
 ❯ 
 ```
 ---
 TODO tcc compiles but doesn't run: `tcc -o pid1sh pid1sh.c -nostdlib -static && du -b pid1sh && ./pid1sh`
 it only displays:
 ```
-7584	a.out
+7552	a.out
 ```
 
 you're in the shell now, have fun.

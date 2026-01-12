@@ -1,9 +1,9 @@
 #include <signal.h>
-#include <limits.h>
-#include <dirent.h>
-#include <asm/unistd_64.h>
-#include <asm/termios.h>
-#include <asm/fcntl.h>
+#include <linux/kernel.h>
+#include <linux/reboot.h>
+#include <linux/unistd.h>
+#include <linux/termios.h>
+#include <linux/fcntl.h>
 #include "libc-pointer-arith.h"
 #include "sigsetops.h"
 
@@ -23,6 +23,7 @@
 	);
 	#define get_env() argc + argv + 1;
 	#define exit(n) {my_syscall1(__NR_exit, n); __builtin_unreachable();}
+	#define NULL 0
 #else
 	int main(int argc, char* argv[]);
 	void _start(){
@@ -38,12 +39,15 @@
 #define chdir(d) my_syscall1(__NR_chdir, d);
 #define open(path, m) my_syscall2(__NR_open, path, m);
 #define close(fd) my_syscall1(__NR_close, fd);
+#define _sysinfo(info) my_syscall1(__NR_sysinfo, info);
 #define execve(path, argv, env)  my_syscall3(__NR_execve, path, argv, env);
 #define getpid() my_syscall0(__NR_getpid)
+#define sync() my_syscall0(__NR_sync);
 #define getcwd255(buf) my_syscall2(__NR_getcwd, buf, 255);
 #define fork() my_syscall0(__NR_fork);
 #define sigprocmask(mode, new, old) my_syscall4(__NR_rt_sigprocmask, mode, new, old, 8);
 #define wait4(pid, b, c, d) my_syscall4(__NR_wait4, pid, b, c, d)
+#define reboot(cmd) my_syscall4(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, cmd, NULL);
 
 #define printn(s, n) write(STDOUT_FILENO, s, n);
 #define print(s) printn(s, sizeof(s) - 1)
@@ -65,5 +69,5 @@ static inline void *memcpy(void *dest, const void *src, unsigned long n){
 	const unsigned char *s = src;
 	for (; n; n--) *d++ = *s++; return dest;
 }
-static inline unsigned long strlen(const char* s){unsigned long len = 0; while (s[len]) len++; return len;}
+unsigned long strlen(const char* s){unsigned long len = 0; while (s[len]) len++; return len;}
 static inline char can_exec(int fd, char *name){return 0 == my_syscall3(__NR_faccessat, fd, name, X_OK);}
