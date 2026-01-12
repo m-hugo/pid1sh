@@ -16,9 +16,9 @@
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
-#  define __THROW	__attribute__((__nothrow__ __LEAF)
+#  define __THROW	__attribute__((__nothrow__, __leaf__))
 #  define __THROWNL	__attribute__((__nothrow__))
-#  define __NTH(fct)	__attribute__((__nothrow__ __LEAF)) fct
+#  define __NTH(fct)	__attribute__((__nothrow__, __leaf__)) fct
 #  define __NTHNL(fct)  __attribute__((__nothrow__)) fct
 #  define __WORDSIZE 64
 

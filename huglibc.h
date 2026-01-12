@@ -9,6 +9,7 @@
 #define STDOUT_FILENO 1
 #define STDIN_FILENO 0
 #define VOID 0
+#define NULL 0
 #define X_OK 1
 #define WEXITSTATUS(wstatus) (wstatus & 0xff00) >> 8;
 
@@ -22,7 +23,6 @@
 	);
 	#define get_env() argc + argv + 1;
 	#define exit(n) {my_syscall1(__NR_exit, n); __builtin_unreachable();}
-	#define NULL 0
 #else
 	int main(int argc, char* argv[]);
 	void _start(){
