@@ -1,5 +1,7 @@
 compiling:
 ---
+- (add `-ffreestanding` if you get `undefined reference` errors)
+---
 - best option:
 ```bash
 gcc -c -o pid1sh.o pid1sh.c -nostdlib -fno-stack-protector -Oz -static -Qn -fno-pic -fno-asynchronous-unwind-tables
