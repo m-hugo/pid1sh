@@ -351,29 +351,30 @@ int main(int argc, char* argv[]) {
 		unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
 	}
 #else
-	print(" ❯ ");
+	char* allprompts = "[31mx❯[0m [32m ❯[0m [33m?❯[0m [34m!❯[0m [35m☠>[0m [36mc❯[0m ❯ ";
+	printn(allprompts+14*6-1, 5);
 	while (1) {
-		char *prompt;
+		long promptidx;
 		switch (process_line(inbuf, outbuf, 0, 0, env)){
 			case -4: // unhandled terminal control
-				prompt = "[36mc❯[0m "; //cyan
+				promptidx = 14*5; //cyan
 				break;
 			case -3: // major failure or unhandled input
-				prompt = "[35m☠>[0m "; //purple
+				promptidx = 14*4; //purple
 				break;
 			case -1: // SignalTerminated or abnormal exit
-				prompt = "[34m!❯[0m "; //blue
+				promptidx = 14*3; //blue
 				break;
 			case 60: // file not found
-				prompt = "[33m?❯[0m "; //yellow
+				promptidx = 14*2; //yellow
 				break;
 			case 0: // exit_success (0)
-				prompt = "[32m ❯[0m "; //green
+				promptidx = 14; //green
 				break;
 			default: // non-zero exit (normal failure)
-				prompt = "[31mx❯[0m "; //red
+				promptidx = 0; //red
 		}
-		printn(prompt, 14);
+		printn(allprompts+promptidx, 14);
 		//unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
 	}
 #endif
