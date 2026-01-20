@@ -332,7 +332,10 @@ while (1) {
 	}
 	//printn(&inbuf, 1);
 	outbuf[ptrlen]=inbuf;
-	if (ptrlen == outlen) outlen++;
+	if (ptrlen == outlen){
+		outlen++;
+		outbuf[outlen] = 0;
+	}
 	ptrlen++;
 }}
 
@@ -371,7 +374,7 @@ int main(int argc, char* argv[]) {
 				prompt = "[31mx❯[0m "; //red
 		}
 		printn(prompt, 14);
-		unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
+		//unsigned char *d = outbuf; while (*d) *d++ = 0; //zero command buffer
 	}
 #endif
 }
